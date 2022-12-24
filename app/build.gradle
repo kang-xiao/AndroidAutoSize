@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
 }
 
@@ -31,8 +31,7 @@ android {
 }
 
 dependencies {
-
     implementation rootProject.ext.dependencies["androidx_core"]
     implementation rootProject.ext.dependencies["androidx_appcompat"]
-    implementation rootProject.ext.dependencies["google_material"]
+    implementation rootProject.ext.dependencies["appcompat_v7"]
 }
