@@ -3,14 +3,14 @@ package com.kangxiao.autosize
 import android.os.Parcel
 import android.os.Parcelable
 
-class DisplayMetricsInfo() : Parcelable{
+class DisplayMetricsInfo() : Parcelable {
 
-    private var density:Float = 0f
-    private var densityDpi:Int = 0
-    private var scaledDensity:Float = 9f
-    private var xdpi:Float = 0f
-    private var screenWidthDp:Int = 0
-    private var screenHeightDp:Int = 0
+    private var density: Float = 0f
+    private var densityDpi: Int = 0
+    private var scaledDensity: Float = 9f
+    private var xdpi: Float = 0f
+    private var screenWidthDp: Int = 0
+    private var screenHeightDp: Int = 0
 
     fun getDensity() = density
     fun getDensityDpi() = densityDpi
@@ -73,6 +73,5 @@ class DisplayMetricsInfo() : Parcelable{
             return arrayOfNulls(size)
         }
     }
-
 
 }

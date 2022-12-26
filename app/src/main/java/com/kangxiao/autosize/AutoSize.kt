@@ -4,17 +4,17 @@ import android.app.Activity
 import android.app.Application
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.transition.Fade
 import android.util.SparseArray
 import com.kangxiao.autosize.unit.Subunits
 import com.kangxiao.autosize.utils.Preconditions
 import android.util.DisplayMetrics
-import android.transition.Fade.IN
 import android.net.Uri
 
 import android.content.Context
+import com.kangxiao.autosize.external.ExternalAdaptInfo
 
-
+import com.kangxiao.autosize.external.ExternalAdaptManager
+import com.kangxiao.autosize.internal.CustomAdapt
 
 
 
@@ -59,6 +59,52 @@ object AutoSize {
         } else {
             autoConvertDensityBaseOnHeight(activity, AutoSizeConfig.getInstance().getDesignHeightInDp().toFloat())
         }
+    }
+
+    /**
+     * 使用外部三方库的 [Activity] 或 Fragment 的自定义适配参数进行适配
+     *
+     * @param activity          [Activity]
+     * @param externalAdaptInfo 三方库的 [Activity] 或 Fragment 提供的适配参数, 需要配合 [ExternalAdaptManager.addExternalAdaptInfoOfActivity]
+     */
+    fun autoConvertDensityOfExternalAdaptInfo(
+        activity: Activity?,
+        externalAdaptInfo: ExternalAdaptInfo
+    ) {
+        Preconditions.checkNotNull(externalAdaptInfo, "externalAdaptInfo == null",null)
+        var sizeInDp = externalAdaptInfo.getSizeInDp()!!
+
+        //如果 ExternalAdaptInfo#getSizeInDp() 返回 0, 则使用在 AndroidManifest 上填写的设计图尺寸
+        if (sizeInDp <= 0) {
+            sizeInDp = if (externalAdaptInfo.isBaseOnWidth()!!) {
+                AutoSizeConfig.getInstance().getDesignWidthInDp().toFloat()
+            } else {
+                AutoSizeConfig.getInstance().getDesignHeightInDp().toFloat()
+            }
+        }
+        autoConvertDensity(activity!!, sizeInDp, externalAdaptInfo.isBaseOnWidth()!!)
+    }
+
+
+    /**
+     * 使用 [Activity] 或 Fragment 的自定义参数进行适配
+     *
+     * @param activity    [Activity]
+     * @param customAdapt [Activity] 或 Fragment 需实现 [CustomAdapt]
+     */
+    fun autoConvertDensityOfCustomAdapt(activity: Activity?, customAdapt: CustomAdapt) {
+        Preconditions.checkNotNull(customAdapt, "customAdapt == null",null)
+        var sizeInDp = customAdapt.getSizeInDp()
+
+        //如果 CustomAdapt#getSizeInDp() 返回 0, 则使用在 AndroidManifest 上填写的设计图尺寸
+        if (sizeInDp <= 0) {
+            sizeInDp = if (customAdapt.isBaseOnWidth()) {
+                AutoSizeConfig.getInstance().getDesignWidthInDp().toFloat()
+            } else {
+                AutoSizeConfig.getInstance().getDesignHeightInDp().toFloat()
+            }
+        }
+        autoConvertDensity(activity!!, sizeInDp, customAdapt.isBaseOnWidth())
     }
 
     /**

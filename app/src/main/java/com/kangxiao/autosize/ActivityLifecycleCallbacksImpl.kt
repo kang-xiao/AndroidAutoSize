@@ -13,11 +13,13 @@ class ActivityLifecycleCallbacksImpl : Application.ActivityLifecycleCallbacks {
     private var mAutoAdaptStrategy: AutoAdaptStrategy? = null
 
     private var mFragmentLifecycleCallbacksImpl: FragmentLifecycleCallbacksImpl? = null
-    private var mFragmentLifecycleCallbacksImplToAndroid: FragmentLifecycleCallbacksImplToAndroid? = null
+    private var mFragmentLifecycleCallbacksImplToAndroid: FragmentLifecycleCallbacksImplToAndroid? =
+        null
 
     constructor(mAutoAdaptStrategy: AutoAdaptStrategy?) {
         if (AutoSizeConfig.DEPENDENCY_ANDROIDX) {
-            mFragmentLifecycleCallbacksImplToAndroid = FragmentLifecycleCallbacksImplToAndroid(mAutoAdaptStrategy)
+            mFragmentLifecycleCallbacksImplToAndroid =
+                FragmentLifecycleCallbacksImplToAndroid(mAutoAdaptStrategy)
         } else if (AutoSizeConfig.DEPENDENCY_SUPPORT) {
             mFragmentLifecycleCallbacksImpl = FragmentLifecycleCallbacksImpl(mAutoAdaptStrategy)
         }
@@ -26,11 +28,24 @@ class ActivityLifecycleCallbacksImpl : Application.ActivityLifecycleCallbacks {
 
     fun setAutoAdaptStrategy(autoAdaptStrategy: AutoAdaptStrategy) {
         this.mAutoAdaptStrategy = autoAdaptStrategy
-
+        mFragmentLifecycleCallbacksImpl?.setAutoAdaptStrategy(autoAdaptStrategy)
+        mFragmentLifecycleCallbacksImplToAndroid?.setAutoAdaptStrategy(autoAdaptStrategy)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        if (AutoSizeConfig.getInstance().isCustomFragment()){
+            if (mFragmentLifecycleCallbacksImplToAndroid != null && activity is androidx.fragment.app.FragmentActivity){
+                mFragmentLifecycleCallbacksImplToAndroid?.let {
+                    activity.supportFragmentManager.registerFragmentLifecycleCallbacks(it,true)
+                }
+            }else if (mFragmentLifecycleCallbacksImpl != null && activity is android.support.v4.app.FragmentActivity){
+                mFragmentLifecycleCallbacksImpl?.let {
+                    activity.supportFragmentManager.registerFragmentLifecycleCallbacks(it,true)
+                }
+            }
+        }
 
+        mAutoAdaptStrategy?.applyAdapt(activity,activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
@@ -38,22 +53,17 @@ class ActivityLifecycleCallbacksImpl : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity) {
-        TODO("Not yet implemented")
     }
 
     override fun onActivityPaused(activity: Activity) {
-        TODO("Not yet implemented")
     }
 
     override fun onActivityStopped(activity: Activity) {
-        TODO("Not yet implemented")
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        TODO("Not yet implemented")
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        TODO("Not yet implemented")
     }
 }

@@ -14,6 +14,6 @@ interface AutoAdaptStrategy {
      * @param target 需要屏幕适配的对象（可能是 {@link Activity} 或者 Fragment）
      * @param activity 需要拿到当前的 {@link Activity} 才能修改 {@link DisplayMetrics#density}
      */
-    fun applyAdapt(target:Any,activity: Activity)
+    fun applyAdapt(target: Any, activity: Activity)
 
 }

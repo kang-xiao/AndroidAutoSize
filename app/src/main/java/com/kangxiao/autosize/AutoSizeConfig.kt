@@ -26,14 +26,12 @@ class AutoSizeConfig {
         const val KEY_DESIGN_HEIGHT_IN_DP = "design_height_in_dp"
 
         private fun findClassByClassName(className: String): Boolean {
-            var hasDependency: Boolean = false
-            try {
+            return try {
                 Class.forName(className)
-                hasDependency = true
+                true
             } catch (e: Exception) {
-                hasDependency = false
+                false
             }
-            return hasDependency
         }
 
         val DEPENDENCY_ANDROIDX = findClassByClassName("androidx.fragment.app.FragmentActivity")
@@ -152,7 +150,7 @@ class AutoSizeConfig {
     /**
      * 是否让框架支持自定义 Fragment 的适配参数，由于这个需求是比较少见的，所以需要使用者手动开启
      */
-    private var isCustomFragment:Boolean? = null
+    private var isCustomFragment:Boolean = false
 
     /**
      * 屏幕方向，{@code true} 为纵向，{@code false} 为横向
@@ -194,6 +192,9 @@ class AutoSizeConfig {
         return init(application,isBaseOnWidth,null)
     }
 
+    /**
+     * 框架会在 APP 启动时自动调用此方法进行初始化，使用者无需手动初始化，初始化方法只需调用一次，否则报错
+     */
     @SuppressLint("RestrictedApi")
     fun init(application: Application, isBaseOnWidth:Boolean, strategy: AutoAdaptStrategy?):AutoSizeConfig{
 
@@ -206,7 +207,7 @@ class AutoSizeConfig {
 
         //设置一个默认值，避免在低配设备上因为获取 MetaData 过慢，导致适配时未能正常获取到设计图尺寸
         //建议使用者在低配设备上主动在 Application#onCreate 中调用 setDesignWidthInDp 代替已使用 AndroidManifest 配置设计图尺寸的方式
-        if (AutoSizeConfig.getInstance()?.getUnitsManager()?.getSupportSubunits() == Subunits.NONE){
+        if (AutoSizeConfig.getInstance().getUnitsManager().getSupportSubunits() == Subunits.NONE){
             mDesignHeightInDp = 640
             mDesignWidthInDp = 360
         }else{
@@ -267,7 +268,7 @@ class AutoSizeConfig {
      * 重新开始框架的运行
      */
     fun restart(){
-        com.kangxiao.autosize.utils.Preconditions.checkNotNull(mActivityLifecycleCallbacksImpl,"Please call the AutoSizeConfig#init() first",null)
+        Preconditions.checkNotNull(mActivityLifecycleCallbacksImpl,"Please call the AutoSizeConfig#init() first",null)
         synchronized(AutoSizeConfig::class.java){
             if (isStop){
                 mApplication?.registerActivityLifecycleCallbacks(mActivityLifecycleCallbacksImpl)
@@ -280,7 +281,7 @@ class AutoSizeConfig {
      * 停止框架的运行
      */
     fun stop(activity: Activity){
-        com.kangxiao.autosize.utils.Preconditions.checkNotNull(mActivityLifecycleCallbacksImpl,"Please call the AutoSizeConfig#init() first",null)
+        Preconditions.checkNotNull(mActivityLifecycleCallbacksImpl,"Please call the AutoSizeConfig#init() first",null)
         synchronized(AutoSizeConfig::class.java){
             if (!isStop){
                 mApplication?.unregisterActivityLifecycleCallbacks(mActivityLifecycleCallbacksImpl)
@@ -482,6 +483,9 @@ class AutoSizeConfig {
 
     fun getApplication() = mApplication
 
+    /**
+     * 获取使用者在 AndroidManifest 中填写的 Meta 信息
+     */
     private fun getMetaData(context: Context){
         thread {
             val packageManager = context.packageManager
