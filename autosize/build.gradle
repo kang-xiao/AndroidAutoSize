@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
@@ -6,7 +6,6 @@ android {
     buildToolsVersion rootProject.ext.android["buildToolsVersion"]
 
     defaultConfig {
-        applicationId "com.kangxiao.demo"
         minSdkVersion rootProject.ext.android["minSdkVersion"]
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
         versionCode rootProject.ext.android["versionCode"]
@@ -26,9 +25,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    lintOptions {
+        abortOnError false
+        warning 'InvalidPackage'
+    }
 }
 
 dependencies {
     implementation rootProject.ext.dependencies["androidx_appcompat"]
-    implementation project(path: ':autosize')
+    implementation rootProject.ext.dependencies["appcompat_v7"]
 }
