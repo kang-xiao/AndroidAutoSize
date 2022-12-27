@@ -487,23 +487,26 @@ class AutoSizeConfig {
      * 获取使用者在 AndroidManifest 中填写的 Meta 信息
      */
     private fun getMetaData(context: Context){
-        thread {
-            val packageManager = context.packageManager
-            var applicationInfo:ApplicationInfo? = null
-            try {
-                applicationInfo = packageManager.getApplicationInfo(context.packageName,PackageManager.GET_META_DATA)
-                applicationInfo.apply {
-                    if (this.metaData!=null){
-                        if (this.metaData.containsKey(KEY_DESIGN_WIDTH_IN_DP)){
-                            mDesignWidthInDp = this.metaData.get(KEY_DESIGN_WIDTH_IN_DP) as Int
-                        }
-                        if (this.metaData.containsKey(KEY_DESIGN_HEIGHT_IN_DP)){
-                            mDesignHeightInDp = this.metaData.get(KEY_DESIGN_HEIGHT_IN_DP) as Int
+
+        Thread {
+            kotlin.run {
+                val packageManager = context.packageManager
+                var applicationInfo:ApplicationInfo? = null
+                try {
+                    applicationInfo = packageManager.getApplicationInfo(context.packageName,PackageManager.GET_META_DATA)
+                    applicationInfo.apply {
+                        if (this.metaData!=null){
+                            if (this.metaData.containsKey(KEY_DESIGN_WIDTH_IN_DP)){
+                                mDesignWidthInDp = this.metaData.get(KEY_DESIGN_WIDTH_IN_DP) as Int
+                            }
+                            if (this.metaData.containsKey(KEY_DESIGN_HEIGHT_IN_DP)){
+                                mDesignHeightInDp = this.metaData.get(KEY_DESIGN_HEIGHT_IN_DP) as Int
+                            }
                         }
                     }
+                }catch (e:Exception){
+                    e.printStackTrace()
                 }
-            }catch (e:Exception){
-                e.printStackTrace()
             }
         }.start()
     }

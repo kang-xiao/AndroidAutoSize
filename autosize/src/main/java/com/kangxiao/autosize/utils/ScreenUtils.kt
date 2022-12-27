@@ -51,8 +51,8 @@ object ScreenUtils {
     /**
      * 获取原始的屏幕尺寸
      */
-    fun getRawScreenSize(context: Context):ArrayList<Int>{
-        val size = arrayListOf<Int>(2)
+    fun getRawScreenSize(context: Context): MutableList<Int> {
+        val size:MutableList<Int> = ArrayList()
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = wm.defaultDisplay
@@ -78,8 +78,9 @@ object ScreenUtils {
             }catch (e : Exception){
             }
         }
-        size[0] = widthPixels
-        size[1] = heightPixels
+        AutoSizeLog.e("widthPixels:$widthPixels,heightPixels:$heightPixels")
+        size.add(widthPixels)
+        size.add(heightPixels)
         return size
     }
 
