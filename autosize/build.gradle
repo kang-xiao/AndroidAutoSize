@@ -32,8 +32,8 @@ android {
 }
 
 dependencies {
-    implementation rootProject.ext.dependencies["androidx_appcompat"]
-    implementation rootProject.ext.dependencies["appcompat_v7"]
+    compileOnly rootProject.ext.dependencies["androidx_appcompat"]
+    compileOnly rootProject.ext.dependencies["appcompat_v7"]
 }
 
 apply from : "publish.gradle"
