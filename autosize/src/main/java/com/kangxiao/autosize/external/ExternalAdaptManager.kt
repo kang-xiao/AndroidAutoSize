@@ -26,7 +26,7 @@ class ExternalAdaptManager {
         if (mCancelAdaptList == null){
             mCancelAdaptList = ArrayList()
         }
-        mCancelAdaptList?.add(targetClass.canonicalName)
+        targetClass.canonicalName?.let { mCancelAdaptList?.add(it) }
         return this
     }
 
@@ -51,7 +51,7 @@ class ExternalAdaptManager {
         if (mExternalAdaptInfos == null){
             mExternalAdaptInfos = HashMap<String,ExternalAdaptInfo>(16)
         }
-        mExternalAdaptInfos?.put(targetClass.canonicalName,info)
+        targetClass.canonicalName?.let { mExternalAdaptInfos?.put(it,info) }
         return this
     }
 

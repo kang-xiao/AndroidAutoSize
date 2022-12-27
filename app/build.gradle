@@ -31,4 +31,5 @@ android {
 dependencies {
     implementation rootProject.ext.dependencies["appcompat_v7"]
     implementation project(path: ':autosize')
+//    implementation rootProject.ext.dependencies["autosize"]
 }

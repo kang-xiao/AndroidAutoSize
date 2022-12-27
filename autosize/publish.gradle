@@ -1,12 +1,24 @@
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication){
-                from components.release
-                groupId = 'com.github.kang-xiao'
-                artifactId = 'AndroidAutoSize'
-                version = '1.0.0'
-            }
-        }
+apply plugin: 'com.novoda.bintray-release'
+
+allprojects {
+    repositories {
+        jcenter()
     }
+    tasks.withType(Javadoc) {
+        options{
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+publish {
+    userOrg = 'kang-xiao'
+    groupId = 'com.github.kang-xiao'
+    artifactId = 'autosize'
+    publishVersion = rootProject.ext.android["versionName"]
+    desc = 'Android屏幕适配'
+    website = 'https://github.com/kang-xiao/AndroidAutoSize'
 }
