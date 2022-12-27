@@ -1,7 +1,7 @@
 package com.kangxiao.demo
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.support.v7.app.AppCompatActivity
 import com.kangxiao.autosize.internal.CustomAdapt
 
 class CustomAdaptActivity : AppCompatActivity(),CustomAdapt {
