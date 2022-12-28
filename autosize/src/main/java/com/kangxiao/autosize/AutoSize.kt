@@ -25,10 +25,10 @@ import com.kangxiao.autosize.internal.CustomAdapt
  */
 object AutoSize {
     private val mCache: SparseArray<DisplayMetricsInfo> = SparseArray()
-    private val MODE_SHIFT = 30
-    private val MODE_MASK = 0x3 shl MODE_SHIFT
-    private val MODE_ON_WIDTH = 1 shl MODE_SHIFT
-    private val MODE_DEVICE_SIZE = 2 shl MODE_SHIFT
+    private const val MODE_SHIFT = 30
+    private const val MODE_MASK = 0x3 shl MODE_SHIFT
+    private const val MODE_ON_WIDTH = 1 shl MODE_SHIFT
+    private const val MODE_DEVICE_SIZE = 2 shl MODE_SHIFT
 
     /**
      * 检查 AndroidAutoSize 是否已经初始化
@@ -82,7 +82,7 @@ object AutoSize {
                 AutoSizeConfig.getInstance().getDesignHeightInDp().toFloat()
             }
         }
-        autoConvertDensity(activity!!, sizeInDp, externalAdaptInfo.isBaseOnWidth()!!)
+        autoConvertDensity(activity, sizeInDp, externalAdaptInfo.isBaseOnWidth()!!)
     }
 
 
@@ -104,7 +104,7 @@ object AutoSize {
                 AutoSizeConfig.getInstance().getDesignHeightInDp().toFloat()
             }
         }
-        autoConvertDensity(activity!!, sizeInDp, customAdapt.isBaseOnWidth())
+        autoConvertDensity(activity, sizeInDp, customAdapt.isBaseOnWidth())
     }
 
     /**
@@ -142,7 +142,7 @@ object AutoSize {
      *                 {@param sizeInDp} 则应该填写设计图的总高度
      * @param isBaseOnWidth 是否按照宽度进行等比例适配，{@code true} 为以宽度进行等比例适配，{@code false} 为以高度进行等比例适配
      */
-    fun autoConvertDensity(activity: Activity, sizeInDp: Float, isBaseOnWidth: Boolean) {
+    fun autoConvertDensity(activity: Activity?, sizeInDp: Float, isBaseOnWidth: Boolean) {
         Preconditions.checkNotNull(activity, "activity == null", null)
         Preconditions.checkMainThread()
 
@@ -166,7 +166,7 @@ object AutoSize {
 
         var key = Math.round(
             sizeInDp + subunitsDesignSize + screenSize * AutoSizeConfig.getInstance()
-                ?.getInitScaledDensity()!!
+                .getInitScaledDensity()
         ) and (MODE_MASK.inv())
         key = if (isBaseOnWidth) {
             key or MODE_ON_WIDTH
@@ -190,12 +190,10 @@ object AutoSize {
         var targetScreenHeightDp: Int = 0
 
         if (displayMetricsInfo == null) {
-            if (isBaseOnWidth) {
-                targetDensity =
-                    (AutoSizeConfig.getInstance().getScreenWidth().toFloat().times(1f)) / sizeInDp
+            targetDensity = if (isBaseOnWidth) {
+                (AutoSizeConfig.getInstance().getScreenWidth().toFloat().times(1f)) / sizeInDp
             } else {
-                targetDensity =
-                    (AutoSizeConfig.getInstance().getScreenHeight().toFloat().times(1f)) / sizeInDp
+                (AutoSizeConfig.getInstance().getScreenHeight().toFloat().times(1f)) / sizeInDp
             }
 
             if (AutoSizeConfig.getInstance().getPrivateFontScale() > 0f) {
@@ -243,6 +241,12 @@ object AutoSize {
             targetScreenWidthDp = displayMetricsInfo.getScreenWidthDp()
             targetScreenHeightDp = displayMetricsInfo.getScreenHeightDp()
         }
+
+        if (activity != null) {
+            setDensity(activity,targetDensity,targetDensityDpi,targetScaledDensity,targetXdpi)
+            setScreenSizeDp(activity,targetScreenWidthDp,targetScreenHeightDp)
+        }
+
     }
 
     /**
@@ -262,9 +266,7 @@ object AutoSize {
 
             }
         }
-        setDensity(
-            activity,
-            AutoSizeConfig.getInstance().getInitDensity(),
+        setDensity(activity, AutoSizeConfig.getInstance().getInitDensity(),
             AutoSizeConfig.getInstance().getInitDensityDpi(),
             AutoSizeConfig.getInstance().getInitScaledDensity(),
             initXdpi

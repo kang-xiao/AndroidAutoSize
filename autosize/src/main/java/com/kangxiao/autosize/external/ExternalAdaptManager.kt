@@ -18,7 +18,7 @@ class ExternalAdaptManager {
      * 将不需要适配的第三方库 {@link Activity} 添加进来（但不局限于三方库），即可让该 {@link Activity} 的适配效果失效
      */
     @Synchronized
-    fun addCancelAdaptOfActivity(targetClass:Class<Any>):ExternalAdaptManager{
+    fun addCancelAdaptOfActivity(targetClass:Class<out Any>):ExternalAdaptManager{
         Preconditions.checkNotNull(targetClass, "targetClass == null",null)
         if (!isRun){
             isRun = true
@@ -43,7 +43,7 @@ class ExternalAdaptManager {
      * 但前提是三方库页面的布局使用的是 dp 和 sp , 如果布局全部使用的 px,那 AndroidAutoSize 也将无能为力
      */
     @Synchronized
-    fun addExternalAdaptInfoOfActivity(targetClass: Class<Any>, info: ExternalAdaptInfo):ExternalAdaptManager{
+    fun addExternalAdaptInfoOfActivity(targetClass: Class<out Any>, info: ExternalAdaptInfo):ExternalAdaptManager{
         Preconditions.checkNotNull(targetClass,"targetClass == null",null)
         if (!isRun){
             isRun = true
